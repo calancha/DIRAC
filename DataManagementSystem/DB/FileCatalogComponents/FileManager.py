@@ -620,13 +620,19 @@ class FileManager( FileManagerBase ):
     if type(fileID) not in [TupleType,ListType]:
       fileID = [fileID]
       
-    if paramName in ['UID','GID','Status','Size']:
+    if paramName in ['Status','Size']:
       # Treat primary file attributes specially
       req = "UPDATE FC_Files SET %s='%s' WHERE FileID IN (%s)" % ( paramName, paramValue, intListToString( fileID ) )
       result = self.db._update(req,connection)
       if not result['OK']:
         return result
       req = "UPDATE FC_FileInfo SET ModificationDate=UTC_TIMESTAMP() WHERE FileID IN (%s)" % intListToString( fileID )
+    else if ['UID','GID','Mode']:
+      # No update ModificationDate
+      req = "UPDATE FC_Files SET %s='%s' WHERE FileID IN (%s)" % ( paramName, paramValue, intListToString( fileID ) )
+      result = self.db._update(req,connection)
+      if not result['OK']:
+        return result
     else:  
       req = "UPDATE FC_FileInfo SET %s='%s', ModificationDate=UTC_TIMESTAMP() WHERE FileID IN (%s)" % ( paramName, paramValue,
                                                                                                        intListToString( fileID ) )
