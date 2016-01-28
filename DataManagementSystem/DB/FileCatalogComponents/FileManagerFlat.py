@@ -323,7 +323,11 @@ class FileManagerFlat(FileManagerBase):
     connection = self._getConnection(connection)
     if type(fileID) not in [TupleType,ListType]:
       fileID = [fileID]
-    req = "UPDATE FC_Files SET %s='%s', ModificationDate=UTC_TIMESTAMP() WHERE FileID IN (%s)" % (paramName,paramValue,intListToString(fileID))
+    if paramName in ['UID','GID','Mode']: # No update ModificationDate
+      req = "UPDATE FC_Files SET %s='%s' WHERE FileID IN (%s)" % (paramName,paramValue,intListToString(fileID))
+    else:
+      req = "UPDATE FC_Files SET %s='%s', ModificationDate=UTC_TIMESTAMP() WHERE FileID IN (%s)" % (paramName,paramValue,intListToString(fileID))
+        
     return self.db._update(req,connection)
 
   ######################################################

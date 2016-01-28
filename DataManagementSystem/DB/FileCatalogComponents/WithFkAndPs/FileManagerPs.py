@@ -787,8 +787,12 @@ class FileManagerPs( FileManagerBase ):
 
     # In case this is a 'new' parameter, we have a failback solution, but we should add a specific ps for it
     else:
-      req = "UPDATE FC_Files SET %s='%s', ModificationDate=UTC_TIMESTAMP() WHERE FileID IN (%s)"\
-            % ( paramName, paramValue, intListToString( fileID ) )
+      if paramName in ['UID','GID','Mode']: # No update ModificationDate
+        req = "UPDATE FC_Files SET %s='%s' WHERE FileID IN (%s)"\
+              % ( paramName, paramValue, intListToString( fileID ) )
+      else:
+        req = "UPDATE FC_Files SET %s='%s', ModificationDate=UTC_TIMESTAMP() WHERE FileID IN (%s)"\
+              % ( paramName, paramValue, intListToString( fileID ) )
       return self.db._update( req, connection )
 
     return S_OK()
