@@ -627,7 +627,7 @@ class FileManager( FileManagerBase ):
       if not result['OK']:
         return result
       req = "UPDATE FC_FileInfo SET ModificationDate=UTC_TIMESTAMP() WHERE FileID IN (%s)" % intListToString( fileID )
-    else if ['UID','GID','Mode']:
+    else if paramName in ['UID','GID','Mode']:
       # No update ModificationDate
       req = "UPDATE FC_Files SET %s='%s' WHERE FileID IN (%s)" % ( paramName, paramValue, intListToString( fileID ) )
       result = self.db._update(req,connection)
